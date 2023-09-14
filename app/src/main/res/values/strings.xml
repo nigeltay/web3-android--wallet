@@ -13,4 +13,7 @@
     <string name="invalid_challenge_id">Please input challenge ID</string>
     <string name="action_execute">Execute</string>
     <string name="action_continue">Continue</string>
+    <string name="circle">CIRCLE</string>
+    <string name="create_wallet_text">Create Wallet</string>
+    <string name="login_text">Login</string>
 </resources>
