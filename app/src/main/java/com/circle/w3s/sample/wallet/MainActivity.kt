@@ -23,9 +23,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Retrieve data from Intent
+        val apiKey = intent.getStringExtra("apiKey")
+        val userToken = intent.getStringExtra("userToken")
+        val encryptionKey = intent.getStringExtra("encryptionKey")
+        val challengeId = intent.getStringExtra("challengeId")
+
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MainFragment.newInstance())
+                .replace(R.id.container, MainFragment.newInstance(apiKey, userToken, encryptionKey, challengeId))
                 .commitNow()
         }
     }

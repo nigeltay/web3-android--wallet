@@ -21,10 +21,13 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.util.Log
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -47,8 +50,20 @@ import com.google.android.material.snackbar.Snackbar
 
 class MainFragment : Fragment(), EventListener {
 
+    private var apiKey: String? = null
+    private var userToken: String? = null
+    private var encryptionKey: String? = null
+    private var challengeId: String? = null
+
     companion object {
-        fun newInstance() = MainFragment()
+        fun newInstance(apiKey: String?, userToken: String?, encryptionKey: String?, challengeId: String?) = MainFragment().apply {
+            arguments = Bundle().apply {
+                putString("apiKey", apiKey)
+                putString("userToken", userToken)
+                putString("encryptionKey", encryptionKey)
+                putString("challengeId", challengeId)
+            }
+        }
     }
 
     private lateinit var viewModel: MainViewModel
@@ -56,6 +71,12 @@ class MainFragment : Fragment(), EventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.let {
+            apiKey = it.getString("apiKey")
+            userToken = it.getString("userToken")
+            encryptionKey = it.getString("encryptionKey")
+            challengeId = it.getString("challengeId")
+        }
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
@@ -97,6 +118,23 @@ class MainFragment : Fragment(), EventListener {
         binding.encryptionKey.inputTitle.setText(R.string.label_encryption_key)
         binding.challengeId.inputTitle.setText(R.string.label_challenge_id)
         binding.endpoint.inputValue.setText(R.string.pw_endpoint)
+
+        // Check if the values is not null before setting the text
+        if (userToken != null) {
+            val editableUserToken = Editable.Factory.getInstance().newEditable(userToken)
+            binding.userToken.inputValue.text = editableUserToken
+        }
+
+        if (encryptionKey != null) {
+            val editableEncryptionKey = Editable.Factory.getInstance().newEditable(encryptionKey)
+            binding.encryptionKey.inputValue.text = editableEncryptionKey
+        }
+
+        if (challengeId != null) {
+            val editableChallengeId = Editable.Factory.getInstance().newEditable(challengeId)
+            binding.challengeId.inputValue.text = editableChallengeId
+        }
+
         binding.endpoint.inputValue.doAfterTextChanged {
             executeDataChanged()
         }
@@ -211,6 +249,8 @@ class MainFragment : Fragment(), EventListener {
                         }
                         return true // App will handle next step, SDK will keep the Activity.
                     }
+                    //redirect to homepage
+
                     return false // App won't handle next step, SDK will finish the Activity.
                 }
 
