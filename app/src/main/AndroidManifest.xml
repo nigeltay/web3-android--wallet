@@ -37,6 +37,14 @@
             android:name=".InitialiseUserWalletActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".HomePageActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".AcquireSessionTokenExistingUser"
+            android:exported="true">
+        </activity>
         
     </application>
 

@@ -16,8 +16,37 @@ import okhttp3.*
 import android.content.Intent
 
 import android.widget.Button
+import com.circle.w3s.sample.wallet.ui.main.LoadingDialog
+import com.google.gson.Gson
 import okhttp3.MediaType
 import okhttp3.RequestBody
+
+data class UserInfoData(
+    val data: UserDataDetail
+)
+
+data class UserDataDetail(
+    val user: User
+)
+
+data class User(
+    val id: String,
+    val status: String,
+    val createDate: String,
+    val pinStatus: String,
+    val pinDetails: PinDetails,
+    val securityQuestionStatus: String,
+    val securityQuestionDetails: SecurityQuestionDetails
+)
+
+data class PinDetails(
+    val failedAttempts: Int
+)
+
+data class SecurityQuestionDetails(
+    val failedAttempts: Int
+)
+
 
 class WalletCreationActivity : AppCompatActivity() {
 
@@ -31,18 +60,22 @@ class WalletCreationActivity : AppCompatActivity() {
         val backButton = binding.backbutton
         val loginButton = binding.loginBtn
         val submitButton = binding.submitbutton
+        val proceedButton = binding.loginproceedbutton
         val progressBar = binding.progressBar
 
         val apiKeyEditText = binding.apiKeyEditText
         val userIdEditText = binding.userIdEditText
         val createUserTitle = binding.createUserTitle
+        val listUserTitle = binding.listUserTitle
         val apiResponseTextView = binding.apiResponseTextView
 
         // Initially, hide the EditText fields and TextView
         apiKeyEditText.visibility = android.view.View.INVISIBLE
         userIdEditText.visibility = android.view.View.INVISIBLE
         createUserTitle.visibility = android.view.View.INVISIBLE
+        listUserTitle.visibility = android.view.View.INVISIBLE
         submitButton.visibility =  android.view.View.INVISIBLE
+        proceedButton.visibility = android.view.View.INVISIBLE
         backButton.visibility = android.view.View.INVISIBLE
         progressBar.visibility = android.view.View.INVISIBLE
         apiResponseTextView.visibility = android.view.View.INVISIBLE
@@ -69,9 +102,11 @@ class WalletCreationActivity : AppCompatActivity() {
             userIdEditText.visibility = android.view.View.INVISIBLE
             createUserTitle.visibility = android.view.View.INVISIBLE
             submitButton.visibility =  android.view.View.INVISIBLE
+            proceedButton.visibility = android.view.View.INVISIBLE
             backButton.visibility = android.view.View.INVISIBLE
             progressBar.visibility = android.view.View.INVISIBLE
             apiResponseTextView.visibility = android.view.View.INVISIBLE
+            listUserTitle.visibility = android.view.View.INVISIBLE
 
             // Hide the other component
             loginButton.visibility = android.view.View.VISIBLE
@@ -184,6 +219,133 @@ class WalletCreationActivity : AppCompatActivity() {
                 }
             }
         }
-        
+
+        loginButton.setOnClickListener{
+            Log.d("WalletCreationActivity", "Login button clicked")
+            // Hide the other component
+            loginButton.visibility = android.view.View.INVISIBLE
+            createWalletButton.visibility = android.view.View.INVISIBLE
+
+            // Show the EditText fields and TextView
+            listUserTitle.visibility = android.view.View.VISIBLE
+            apiKeyEditText.visibility = android.view.View.VISIBLE
+            userIdEditText.visibility = android.view.View.VISIBLE
+            proceedButton.visibility = android.view.View.VISIBLE
+            backButton.visibility = android.view.View.VISIBLE
+        }
+
+        proceedButton.setOnClickListener {
+            val userId = userIdEditText.text.toString().trim()
+            if (userId.isEmpty()) {
+                // userId is empty, display a warning message
+                userIdEditText.error = "User ID is required"
+            } else if (userId.length < 5 || userId.length > 50) {
+                // userId length is not within the required range, display a warning message
+                userIdEditText.error = "User ID must be between 5 and 50 characters"
+            } else {
+                // userId is valid, you can proceed with further actions here
+                // Clear any previous error message
+                userIdEditText.error = null
+            }
+            //validate API Key value
+            val apiKey = apiKeyEditText.text.toString().trim()
+            if (apiKey.isEmpty()) {
+                // userId is empty, display a warning message
+                apiKeyEditText.error = "API Key is required"
+            } else {
+                // userId is valid, you can proceed with further actions here
+                // Clear any previous error message
+                apiKeyEditText.error = null
+            }
+            if (apiKeyEditText.error == null && userIdEditText.error == null) {
+                val loadingDialog = LoadingDialog(this, "Loading fetching your user data...") // Specify the loading text here
+                loadingDialog.show()
+
+                //call Circle API to list the user based on userId inputted
+                GlobalScope.launch(Dispatchers.IO) {
+                    val client = OkHttpClient()
+
+                    val request = Request.Builder()
+                        .url("https://api.circle.com/v1/w3s/users/$userId")
+                        .get()
+                        .addHeader("accept", "application/json")
+                        .addHeader("authorization", "Bearer $apiKey")
+                        .build()
+
+                    try {
+                        val response = client.newCall(request).execute()
+
+                        if(response.isSuccessful){
+                            val responseBody = response.body?.string()
+                            // Use Gson to parse the JSON response into your data class
+                            val gson = Gson()
+                            val responseObject = gson.fromJson(responseBody, UserInfoData::class.java)
+                            Log.d("WalletCreationActivity", "Data: $responseObject")
+                            val userStatus = responseObject.data.user.status
+                            val securityQuestionStatus = responseObject.data.user.securityQuestionStatus
+                            val pinStatus = responseObject.data.user.pinStatus
+
+                            if( userStatus != "ENABLED" || securityQuestionStatus != "ENABLED" || pinStatus != "ENABLED"){
+                                loadingDialog.dismiss()
+                                runOnUiThread {
+                                    progressBar.visibility = android.view.View.INVISIBLE
+                                    apiResponseTextView.visibility = android.view.View.VISIBLE
+
+                                    apiResponseTextView.text = "User has not answered security questions or setup a PIN yet. Please go back and create a new wallet instead."
+                                }
+                            } else {
+                                runOnUiThread {
+                                    //redirect to acquire session token for userId
+                                    val userIdResponse = responseObject.data.user.id
+                                    Log.d("WalletCreationActivity", "Successfully obtain user data.")
+                                    loadingDialog.dismiss()
+
+                                    val intent = Intent(this@WalletCreationActivity, AcquireSessionTokenExistingUser::class.java)
+                                    //pass data to next page
+                                    intent.putExtra("apiKey", apiKey)
+                                    intent.putExtra("userId", userId)
+                                    // Start the new activity
+                                    startActivity(intent)
+
+                                    // Finish the current activity if needed
+                                    finish()
+
+                                }
+                            }
+
+                        } else {
+                            // Update UI components
+                            runOnUiThread {
+                                Log.e("WalletCreationActivityError", "Error: ${response.code}")
+                                progressBar.visibility = android.view.View.INVISIBLE
+                                apiResponseTextView.visibility = android.view.View.VISIBLE
+                                val errorCode = response.code // Assuming you have the error code from the API response
+//                            val errorMessage: String = when (errorCode) {
+//                                401 -> "Invalid credentials"
+//                                409 -> "Existing user already created with the provided userId."
+//                                else -> "Unknown error"
+//                            }
+
+                                apiResponseTextView.text = "Error ${errorCode}:. Please try again. "
+                            }
+                        }
+
+                    } catch (e: IOException) {
+                        Log.e("WalletCreationActivityError", "Error: ${e.message}", e)
+
+                        runOnUiThread {
+                            progressBar.visibility = android.view.View.INVISIBLE
+                            apiResponseTextView.visibility = android.view.View.VISIBLE
+                            apiResponseTextView.text = "Error: ${e.message}"
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+
     }
 }

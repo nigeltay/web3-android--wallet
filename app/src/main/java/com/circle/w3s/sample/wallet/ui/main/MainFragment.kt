@@ -41,6 +41,8 @@ import circle.programmablewallet.sdk.presentation.EventListener
 import circle.programmablewallet.sdk.presentation.SecurityQuestion
 import circle.programmablewallet.sdk.result.ExecuteResult
 import com.circle.w3s.sample.wallet.CustomActivity
+import com.circle.w3s.sample.wallet.HomePageActivity
+import com.circle.w3s.sample.wallet.MainActivity
 import com.circle.w3s.sample.wallet.R
 import com.circle.w3s.sample.wallet.databinding.FragmentMainBinding
 import com.circle.w3s.sample.wallet.pwcustom.MyLayoutProvider
@@ -249,8 +251,6 @@ class MainFragment : Fragment(), EventListener {
                         }
                         return true // App will handle next step, SDK will keep the Activity.
                     }
-                    //redirect to homepage
-
                     return false // App won't handle next step, SDK will finish the Activity.
                 }
 
@@ -260,6 +260,22 @@ class MainFragment : Fragment(), EventListener {
                         "%s, %s",
                         result.resultType.name,
                         result.status.name))
+
+                    //redirect to homepage -> displays wallet address and balance.
+                    Log.d("MainFragment", "On API response success")
+                    //redirect to form page to input fields for challenge ID
+                    val intent = Intent(requireActivity(), HomePageActivity::class.java)
+
+                    //pass data to next page, user only needs to input APP ID
+                    intent.putExtra("apiKey", apiKey)
+                    intent.putExtra("userToken", userToken)
+
+
+                    // Start the new activity
+                    requireActivity().startActivity(intent)
+
+                    // Finish the current activity if needed (optional)
+                    requireActivity().finish()
                 }
             })
     }
