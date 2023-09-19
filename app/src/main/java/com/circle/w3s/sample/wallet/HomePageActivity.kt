@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
-
+import com.circle.w3s.sample.wallet.ui.main.LoadingDialog
 
 data class GetUserWalletResponse(
     val data: WalletData
@@ -83,11 +83,11 @@ class HomePageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = HomepageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val loadingDialog = LoadingDialog(this@HomePageActivity, "Getting wallet data, please wait...") // Specify the loading text here
 
         // Initialize UI components
         val statusLoadingTextView = binding.statusLoadingTextView
         val tokenBalanceText = binding.tokenBalanceText
-        val progressBar = binding.progressBar2
         val refreshButton = binding.refreshbutton
         val receiveButton = binding.receiveBtn
         val sendButton = binding.SendBtn
@@ -104,9 +104,9 @@ class HomePageActivity : AppCompatActivity() {
 
         // Delay before making network requests (5 seconds)
         val delayMilliseconds = 2500L
-
+        loadingDialog.show()
         // Start the network request to get user wallet id
-        getUserWalletId(apiKey, userToken, progressBar, statusLoadingTextView, tokenBalanceText, delayMilliseconds, walletAddressText, copyButton)
+        getUserWalletId(apiKey, userToken, statusLoadingTextView, tokenBalanceText, delayMilliseconds, walletAddressText, copyButton, loadingDialog)
 
         sendButton.setOnClickListener{
             Log.d("HomePageActivity", "On Send button press")
@@ -120,7 +120,7 @@ class HomePageActivity : AppCompatActivity() {
             intent.putExtra("encryptionKey", encryptionKey)
             intent.putExtra("walletId", userWalletId)
             intent.putExtra("tokenId", tokenId)
-
+            intent.putExtra("tokenBalance", userTokenBalance)
 
             // Start the new activity
             startActivity(intent)
@@ -178,11 +178,11 @@ class HomePageActivity : AppCompatActivity() {
         refreshButton.setOnClickListener{
             Log.d("HomePageActivity", "On Refresh button press")
             statusLoadingTextView.text = "Loading....Getting wallet data"
-            progressBar.visibility = View.VISIBLE
+            loadingDialog.show()
             // Delay before making network requests (2 seconds)
             val delayInMilliseconds = 2000L
             if (userWalletId.isNotEmpty()){
-                getUserWalletId(apiKey, userToken, progressBar, statusLoadingTextView, tokenBalanceText, delayInMilliseconds, walletAddressText, copyButton)
+                getUserWalletId(apiKey, userToken, statusLoadingTextView, tokenBalanceText, delayInMilliseconds, walletAddressText, copyButton, loadingDialog)
             }
         }
 
@@ -191,11 +191,11 @@ class HomePageActivity : AppCompatActivity() {
     private fun getUserTokenBalance(
         apiKey: String?,
         userToken: String?,
-        progressBar: ProgressBar,
         tokenBalanceText: TextView,
         statusLoadingTextView: TextView,
         walletAddressText: TextView,
         copyButton: Button,
+        loadingDialog: LoadingDialog,
     ) {
         Log.d("HomePageActivity", "Getting Token Balance: $userToken, $userWalletId")
         GlobalScope.launch(Dispatchers.IO) {
@@ -235,7 +235,7 @@ class HomePageActivity : AppCompatActivity() {
                         runOnUiThread {
                             statusLoadingTextView.text = "Success! You can now proceed to send/receive or view past transactions."
                             tokenBalanceText.text = "$userTokenSymbol: $userTokenBalance"
-                            progressBar.visibility = View.INVISIBLE
+                            loadingDialog.dismiss()
                             walletAddressText.visibility = View.VISIBLE
                             copyButton.visibility = View.VISIBLE
 
@@ -246,7 +246,7 @@ class HomePageActivity : AppCompatActivity() {
                         runOnUiThread {
                             statusLoadingTextView.text = "Success! You have no tokens in your wallet, send some AVAX-Fuji tokens to your wallet address."
 //                            tokenBalanceText.text = "$userTokenSymbol: $userTokenBalance"
-                            progressBar.visibility = View.INVISIBLE
+                            loadingDialog.dismiss()
                             walletAddressText.visibility = View.VISIBLE
                             copyButton.visibility = View.VISIBLE
 
@@ -258,7 +258,7 @@ class HomePageActivity : AppCompatActivity() {
                     // Handle API response error
                     Log.e("HomePageActivity", "Error ${response.code}")
                     runOnUiThread {
-                        progressBar.visibility = View.INVISIBLE
+                        loadingDialog.dismiss()
                     }
                 }
             } catch (e: IOException) {
@@ -270,12 +270,12 @@ class HomePageActivity : AppCompatActivity() {
     private fun getUserWalletId(
         apiKey: String?,
         userToken: String?,
-        progressBar: ProgressBar,
         statusLoadingTextView: TextView,
         tokenBalanceText: TextView,
         delayMilliseconds: Long,
         walletAddressText: TextView,
         copyButton: Button,
+        loadingDialog: LoadingDialog,
     ) {
         GlobalScope.launch(Dispatchers.IO) {
             delay(delayMilliseconds)
@@ -309,7 +309,7 @@ class HomePageActivity : AppCompatActivity() {
                         userId = firstWallet.userId
 
                         // Call the function to get user token balance
-                        getUserTokenBalance(apiKey, userToken, progressBar, tokenBalanceText, statusLoadingTextView, walletAddressText, copyButton)
+                        getUserTokenBalance(apiKey, userToken, tokenBalanceText, statusLoadingTextView, walletAddressText, copyButton, loadingDialog)
                     } else {
                         // Handle the case when the array is empty
                         Log.e("HomePageActivity", "No Wallets found for user.")
@@ -318,12 +318,12 @@ class HomePageActivity : AppCompatActivity() {
                     // Handle error response
                     Log.e("HomePageActivity", "Error ${response.code}")
                     runOnUiThread {
-                        progressBar.visibility = View.INVISIBLE
+                        loadingDialog.dismiss()
                     }
                 }
             } catch (e: IOException) {
                 runOnUiThread {
-                    progressBar.visibility = View.INVISIBLE
+                    loadingDialog.dismiss()
                     Log.e("HomePageActivity", "Get Wallets Error: ${e.message}", e)
                 }
             }

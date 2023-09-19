@@ -46,9 +46,10 @@ class SendTokenActivity: AppCompatActivity() {
         val encryptionKey = intent.getStringExtra("encryptionKey")
         val tokenId = intent.getStringExtra("tokenId")
         val walletId = intent.getStringExtra("walletId")
+        val avaxTokenBalance = intent.getStringExtra("tokenBalance")
 
 
-        Log.d("SendTokenActivity", "Msg: ${userToken},${apiKey}, $encryptionKey, $tokenId, $walletId")
+        Log.d("SendTokenActivity", "Msg: ${avaxTokenBalance}")
 
         backButton.setOnClickListener {
             //redirect to send tokens page
@@ -68,6 +69,8 @@ class SendTokenActivity: AppCompatActivity() {
 
         sendButton.setOnClickListener {
             Log.d("SendTokenActivity", "On Send button click.")
+            val tokenBalance = avaxTokenBalance?.toDouble()
+            val userInputDecimal = tokenAmountUserInput.text.toString().trim().toDouble()
 
             //validate input fields
             val recipientWalletAddress = recipientWalletAddressUserInput.text.toString().trim()
@@ -80,6 +83,10 @@ class SendTokenActivity: AppCompatActivity() {
             if (tokenAmountInput.isEmpty()) {
                 // userId is empty, display a warning message
                 tokenAmountUserInput.error = "Token amount is required."
+            }
+
+            if(userInputDecimal > tokenBalance!! * 0.9){
+                tokenAmountUserInput.error = "Token amount cannot be more than wallet token balance. Need to account for gas fees as well."
             }
 
             if(recipientWalletAddressUserInput.error == null && tokenAmountUserInput.error == null){
