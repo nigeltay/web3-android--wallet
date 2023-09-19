@@ -320,10 +320,7 @@ class WalletCreationActivity : AppCompatActivity() {
                                 progressBar.visibility = android.view.View.INVISIBLE
                                 apiResponseTextView.visibility = android.view.View.VISIBLE
                                 val errorCode = response.code // Assuming you have the error code from the API response
-//                            val errorMessage: String = when (errorCode) {
-//                                401 -> "Invalid credentials"
-//                                409 -> "Existing user already created with the provided userId."
-//                                else -> "Unknown error"
+                                loadingDialog.dismiss()
 //                            }
 
                                 apiResponseTextView.text = "Error ${errorCode}:. Please try again. "

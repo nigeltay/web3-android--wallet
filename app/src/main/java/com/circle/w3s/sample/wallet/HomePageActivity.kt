@@ -5,6 +5,12 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.content.Context
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Intent
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.circle.w3s.sample.wallet.databinding.HomepageBinding
 import com.google.gson.Gson
@@ -70,6 +76,8 @@ class HomePageActivity : AppCompatActivity() {
     private var userWalletAddress = ""
     private var userTokenBalance = ""
     private var userTokenSymbol = ""
+    private var tokenId = ""
+    private var userId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,17 +92,89 @@ class HomePageActivity : AppCompatActivity() {
         val receiveButton = binding.receiveBtn
         val sendButton = binding.SendBtn
         val viewTransactions = binding.viewTransactionBtn
+        val copyButton = binding.copyButton
+        copyButton.visibility = View.INVISIBLE
+        val walletAddressText = binding.walletAddressTextView
+        walletAddressText.visibility = View.INVISIBLE
 
         // Retrieve values from the intent extras
         val apiKey = intent.getStringExtra("apiKey")
         val userToken = intent.getStringExtra("userToken")
+        val encryptionKey = intent.getStringExtra("encryptionKey")
 
         // Delay before making network requests (5 seconds)
-        val delayMilliseconds = 5000L
+        val delayMilliseconds = 2500L
 
         // Start the network request to get user wallet id
-        getUserWalletId(apiKey, userToken, progressBar, statusLoadingTextView, tokenBalanceText, delayMilliseconds)
+        getUserWalletId(apiKey, userToken, progressBar, statusLoadingTextView, tokenBalanceText, delayMilliseconds, walletAddressText, copyButton)
 
+        sendButton.setOnClickListener{
+            Log.d("HomePageActivity", "On Send button press")
+
+            //redirect to send tokens page
+            val intent = Intent(this@HomePageActivity, SendTokenActivity::class.java)
+
+            //pass data to next page
+            intent.putExtra("apiKey", apiKey)
+            intent.putExtra("userToken", userToken)
+            intent.putExtra("encryptionKey", encryptionKey)
+            intent.putExtra("walletId", userWalletId)
+            intent.putExtra("tokenId", tokenId)
+
+
+            // Start the new activity
+            startActivity(intent)
+
+            // Finish the current activity if needed
+            finish()
+
+        }
+
+        viewTransactions.setOnClickListener {
+            Log.d("HomePageActivity", "On view transactions button press")
+
+            //redirect to view transactions page
+            val intent = Intent(this@HomePageActivity, TransactionsActivity::class.java)
+            //pass data to next page
+            intent.putExtra("apiKey", apiKey)
+            intent.putExtra("userToken", userToken)
+            intent.putExtra("encryptionKey", encryptionKey)
+            intent.putExtra("userId", userId)
+
+            // Start the new activity
+            startActivity(intent)
+
+            // Finish the current activity if needed
+            finish()
+        }
+
+        copyButton.setOnClickListener {
+            // Get the text you want to copy
+            val textToCopy = userWalletAddress
+            // Get the clipboard manager
+            val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+            // Create a ClipData object to hold the text
+            val clipData = ClipData.newPlainText("label", textToCopy)
+
+            // Set the data to clipboard
+            clipboardManager.setPrimaryClip(clipData)
+
+            // Show a toast to confirm the copy operation
+            Toast.makeText(this, "Copied to clipboard: $textToCopy", Toast.LENGTH_SHORT).show()
+        }
+
+        //receive button click
+        receiveButton.setOnClickListener {
+            Toast.makeText(this@HomePageActivity, "Click on copy button to copy your wallet address.", Toast.LENGTH_LONG).show()
+            walletAddressText.visibility = View.VISIBLE
+            copyButton.visibility = View.VISIBLE
+
+            walletAddressText.text = "Wallet Address: $userWalletAddress"
+
+        }
+
+        //refresh button click
         refreshButton.setOnClickListener{
             Log.d("HomePageActivity", "On Refresh button press")
             statusLoadingTextView.text = "Loading....Getting wallet data"
@@ -102,10 +182,10 @@ class HomePageActivity : AppCompatActivity() {
             // Delay before making network requests (2 seconds)
             val delayInMilliseconds = 2000L
             if (userWalletId.isNotEmpty()){
-                getUserWalletId(apiKey, userToken, progressBar, statusLoadingTextView, tokenBalanceText, delayInMilliseconds)
+                getUserWalletId(apiKey, userToken, progressBar, statusLoadingTextView, tokenBalanceText, delayInMilliseconds, walletAddressText, copyButton)
             }
-
         }
+
     }
 
     private fun getUserTokenBalance(
@@ -113,7 +193,9 @@ class HomePageActivity : AppCompatActivity() {
         userToken: String?,
         progressBar: ProgressBar,
         tokenBalanceText: TextView,
-        statusLoadingTextView: TextView
+        statusLoadingTextView: TextView,
+        walletAddressText: TextView,
+        copyButton: Button,
     ) {
         Log.d("HomePageActivity", "Getting Token Balance: $userToken, $userWalletId")
         GlobalScope.launch(Dispatchers.IO) {
@@ -146,19 +228,29 @@ class HomePageActivity : AppCompatActivity() {
                         val firstWalletTokenData = tokenBalanceArrayData[0]
                         userTokenBalance = firstWalletTokenData.amount
                         userTokenSymbol = firstWalletTokenData.token.symbol
+                        tokenId = firstWalletTokenData.token.id
+
 
                         // Update UI components
                         runOnUiThread {
-                            statusLoadingTextView.text = "Success!\nWallet Address: $userWalletAddress"
+                            statusLoadingTextView.text = "Success! You can now proceed to send/receive or view past transactions."
                             tokenBalanceText.text = "$userTokenSymbol: $userTokenBalance"
                             progressBar.visibility = View.INVISIBLE
+                            walletAddressText.visibility = View.VISIBLE
+                            copyButton.visibility = View.VISIBLE
+
+                            walletAddressText.text = "Wallet Address: $userWalletAddress"
                         }
                     } else {
                         // Update UI components
                         runOnUiThread {
-                            statusLoadingTextView.text = "Success!\nYou have no tokens in your wallet, send some AVAX-Fuji tokens into your wallet address at $userWalletAddress"
+                            statusLoadingTextView.text = "Success! You have no tokens in your wallet, send some AVAX-Fuji tokens to your wallet address."
 //                            tokenBalanceText.text = "$userTokenSymbol: $userTokenBalance"
                             progressBar.visibility = View.INVISIBLE
+                            walletAddressText.visibility = View.VISIBLE
+                            copyButton.visibility = View.VISIBLE
+
+                            walletAddressText.text = "Wallet Address: $userWalletAddress"
                         }
                         Log.d("HomePageActivity", "No Token Balances data found")
                     }
@@ -181,7 +273,9 @@ class HomePageActivity : AppCompatActivity() {
         progressBar: ProgressBar,
         statusLoadingTextView: TextView,
         tokenBalanceText: TextView,
-        delayMilliseconds: Long
+        delayMilliseconds: Long,
+        walletAddressText: TextView,
+        copyButton: Button,
     ) {
         GlobalScope.launch(Dispatchers.IO) {
             delay(delayMilliseconds)
@@ -212,9 +306,10 @@ class HomePageActivity : AppCompatActivity() {
                         val firstWallet = myWalletObjectArray[0]
                         userWalletId = firstWallet.id
                         userWalletAddress = firstWallet.address
+                        userId = firstWallet.userId
 
                         // Call the function to get user token balance
-                        getUserTokenBalance(apiKey, userToken, progressBar, tokenBalanceText, statusLoadingTextView)
+                        getUserTokenBalance(apiKey, userToken, progressBar, tokenBalanceText, statusLoadingTextView, walletAddressText, copyButton)
                     } else {
                         // Handle the case when the array is empty
                         Log.e("HomePageActivity", "No Wallets found for user.")

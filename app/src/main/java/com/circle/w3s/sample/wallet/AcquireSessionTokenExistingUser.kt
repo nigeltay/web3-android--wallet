@@ -80,6 +80,7 @@ class AcquireSessionTokenExistingUser: AppCompatActivity()  {
                         //pass data to next page
                         intent.putExtra("apiKey", apiKey)
                         intent.putExtra("userToken", userToken)
+                        intent.putExtra("encryptionKey", encryptionKey)
 
                         // Start the new activity
                         startActivity(intent)
