@@ -1,4 +1,4 @@
 <resources>
     <string name="pw_endpoint" translatable="false">https://api.circle.com/v1/w3s/</string>
-    <string name="pw_app_id" translatable="false">27f9a5e7-6fcd-5fd2-8efd-5527c604c113</string>
+    <string name="pw_app_id" translatable="false">REPLACE_WITH_YOUR_APP_ID</string>
 </resources>
