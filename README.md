@@ -16,6 +16,12 @@
 
 ## Run the Sample App
 
+Clone the project from `https://github.com/nigeltay/web3-android--wallet`
+
+```
+git clone https://github.com/nigeltay/web3-android--wallet.git
+```
+
 1. Open the project by Android Studio: File ➜ Open ➜ choose the project root folder.
 2. Edit `app/src/main/res/values/config.xml` ➜ `pw_app_id` and replace with`APP ID` found from https://console.circle.com/wallets/user/configurator.
 ```
