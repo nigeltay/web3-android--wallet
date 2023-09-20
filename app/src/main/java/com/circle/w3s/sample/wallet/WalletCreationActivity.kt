@@ -56,6 +56,7 @@ class WalletCreationActivity : AppCompatActivity() {
         val binding = WalletcreationpageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //define all buttons, textViews and input fields
         val createWalletButton = binding.createWallet
         val backButton = binding.backbutton
         val loginButton = binding.loginBtn

@@ -1,6 +1,4 @@
-# Circle Programmable Wallet SDK for Android - Sample
-
-> Sample app for integrating Circle Programmable Wallet SDK.
+# Circle Programmable Wallet SDK for Android
 
 - Bookmark
   - [Requirement](#requirement)
@@ -8,6 +6,7 @@
   - [Create new wallet](#create-new-wallet)
   - [Login with existing wallet](#login-with-existing-wallet)
   - [Send tokens](#send-tokens)
+  - [Simple code explanation](#simple-code-explanation)
 ---
 
 
@@ -147,3 +146,83 @@ Transaction type
  <img src="readme_images/transactionDetails.png" alt="drawing" width="400"/>
 
  You can now go back to the wallet info homepage to view udpated balance or click refresh button to get updated balance of AVAX-FUJI tokens for your wallet.
+
+ ## Simple code explanation
+
+ ### Create wallet
+ - Files to look at:
+    - `walletCreationActivity.kt` - Defines a class to represent an activity
+      - On Submit Button click, Validates fields and calls `https://api.circle.com/v1/w3s/users` API endpoint to create a new user -> https://developers.circle.com/w3s/reference/createuser
+
+      - On API response success - user is redirected to acquire session token on another page
+
+      <img src="readme_images/codeSnippets/submitBtnClicked.png" alt="drawing" width="700"/>
+
+    - `walletcreationpage.xml` - define the layout and structure of UI - buttons, textViews etc
+
+ ### Acquire session token
+ - Files to look at:
+    - `AcquireSessionTokenActivity.kt` 
+      - On page load, an API called to create a token for the user created in the previous step at `https://api.circle.com/v1/w3s/users/token` -> https://developers.circle.com/w3s/reference/getusertoken
+
+      - On API response success, a user token and encryption key is returned to the application
+      - The application will pass the data to the next page as user is redirected to create and intialise a wallet
+
+      <img src="readme_images/codeSnippets/acquireToken.png" alt="drawing" width="700"/>
+
+    - `acquire_session_token.xml`  - define the layout and structure of UI - buttons, textViews etc
+
+### Initialise User Wallet
+ - Files to look at:
+    - `InitialiseUserWalletActivity.kt`
+      - On page load, the application will call `https://api.circle.com/v1/w3s/user/initialize` endpoint to create a challenge for PIN setup and create wallet(s). -> https://developers.circle.com/w3s/reference/createuserwithpinchallenge
+
+      <img src="readme_images/codeSnippets/initialiseAccount.png" alt="drawing" width="700"/>
+
+      - On API response success, an challenge Id string is returned and we will pass it to the next page where user will just need to input the APP ID.
+
+    - `initialise_account.xml` - define the layout and structure of UI
+  
+### Input Challenge Id
+- This section is used for 
+    - pinsetup and to create wallet
+    - authenicate user when initating a transfer of tokens
+
+- Files to look at:
+    - `MainActivity.kt` - calls and display the `MainFragment.kt`
+    - `MainFragment.kt` -  Called as a fragment to represent a portion of the UI or a specific functionality within an activity. 
+      - Main function to look at `executePwSdk()`
+          - inits and use Circle WalletSDK to execute the request. Depending on the type of challenge Id type it either 
+            - prompts user to create new PIN and sets security questions  - use to create new wallet
+            - Prompts user for PIN to authenicate and sign a request - use when initiate a transfer of token for exisiting wallet
+
+          <img src="readme_images/codeSnippets/walletSDK.png" alt="drawing" width="700"/>
+
+    - `fragment_main.xml` - UI layout of form fields for user to input and execute the challenge
+
+
+### Get User Wallet Data
+- Files to look at:
+  - `HomePageActivity.xml` 
+    - On page load, two API points will be called to get the wallet data in sequence
+      - First API endpoint, retrieves a list of all user-controlled wallet -  `https://api.circle.com/v1/w3s/wallets` -> https://developers.circle.com/w3s/reference/listwallets
+
+      - `getUserWalletId` function is called to page load. 
+      <img src="readme_images/codeSnippets/getWalletId.png" alt="drawing" width="700"/>
+
+      - After 1st API call success, it will proceed to call `https://api.circle.com/v1/w3s/wallets/{id}/balances` to get the token balance of token(AVAX-FUJI) -> https://developers.circle.com/w3s/reference/listwalletballance
+
+      - `getUserTokenBalance` function is then called from `getUserWalletId` after getting a wallet Id from the response. Wallet token balance is then retrieve from the API endpoint.
+      <img src="readme_images/codeSnippets/tokenBalance.png" alt="drawing" width="700"/>
+
+  - `homepage.xml` - define the layout and structure of UI
+
+
+### Get list of transactions
+ - Files to look at:
+  - `TransactionsActivity.xml`
+      - On page load,it calls the endpoint at `https://api.circle.com/v1/w3s/transactions` to retrieve all AVAX-FUJI chain transactions data that includes details such as status, source/destination, and transaction hash. -> https://developers.circle.com/w3s/reference/listtransactions
+
+       <img src="readme_images/codeSnippets/getTransactions.png" alt="drawing" width="700"/>
+
+  - `transactionspage.xml` - define the layout and structure of UI
