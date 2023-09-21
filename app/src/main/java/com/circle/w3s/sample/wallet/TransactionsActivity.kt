@@ -69,7 +69,8 @@ data class TransactionInfo(
     val blockchain: String,
     val walletId: String,
     val createDate: String,
-    val updateDate: String
+    val updateDate: String,
+    val tokenId: String,
 )
 
 class TransactionsActivity: AppCompatActivity()  {
@@ -99,6 +100,7 @@ class TransactionsActivity: AppCompatActivity()  {
         val amountText = binding.amountTextView
         val txHashTextView = binding.txHashTextView
         val transactionTypeText = binding.transactionTypeTextView
+        val tokenTextView = binding.tokenTextView
         val blockchainText = binding.blockchainTextView
         val walletIdText = binding.walletIdTextView
         val createDateText = binding.createDateTextView
@@ -147,6 +149,7 @@ class TransactionsActivity: AppCompatActivity()  {
                             transaction.walletId,
                             transaction.createDate,
                             transaction.updateDate,
+                            transaction.tokenId,
                         )
                     }
                     transactions = selectedFieldsList
@@ -155,17 +158,23 @@ class TransactionsActivity: AppCompatActivity()  {
                     runOnUiThread {
                         for (transaction in transactions) {
 
+                            val tokenName = if (transaction.tokenId == "87a5c41c-fcb4-5973-8c66-72e2ed851ab8") {
+                                "Avalanche-Fuji"
+                            } else {
+                                "USD Coin"
+                            }
+
                             val tableRow = TableRow(this@TransactionsActivity)
-                            val stateTextView = TextView(this@TransactionsActivity)
-                            stateTextView.text = transaction.state
-                            stateTextView.layoutParams = TableRow.LayoutParams(
+                            val tokenNameTextView = TextView(this@TransactionsActivity)
+                            tokenNameTextView.text = tokenName
+                            tokenNameTextView.layoutParams = TableRow.LayoutParams(
                                 TableRow.LayoutParams.MATCH_PARENT,
                                 TableRow.LayoutParams.MATCH_PARENT
                             )
-                            stateTextView.setPadding(15, 15, 15, 15) // Set padding to 15
-                            stateTextView.setBackgroundResource(R.drawable.table_border)
-                            stateTextView.setTextColor(Color.BLACK)
-                            tableRow.addView(stateTextView)
+                            tokenNameTextView.setPadding(15, 15, 15, 15) // Set padding to 15
+                            tokenNameTextView.setBackgroundResource(R.drawable.table_border)
+                            tokenNameTextView.setTextColor(Color.BLACK)
+                            tableRow.addView(tokenNameTextView)
 
                             val amountTextView = TextView(this@TransactionsActivity)
                             amountTextView.text = transaction.amount
@@ -225,6 +234,15 @@ class TransactionsActivity: AppCompatActivity()  {
 
                                 val transactionTypeTextHtml = "<b>Transaction Type:</b> ${transaction.transactionType}"
                                 transactionTypeText.text = Html.fromHtml(transactionTypeTextHtml, Html.FROM_HTML_MODE_LEGACY)
+
+                                val tokenName = if (transaction.tokenId == "87a5c41c-fcb4-5973-8c66-72e2ed851ab8") {
+                                    "Avalanche-Fuji"
+                                } else {
+                                    "USD Coin"
+                                }
+
+                                val tokenIdTextHtml = "<b>Token:</b> $tokenName"
+                                tokenTextView.text = Html.fromHtml(tokenIdTextHtml, Html.FROM_HTML_MODE_LEGACY)
 
                                 val blockchainTextHtml = "<b>Blockchain:</b> ${transaction.blockchain}"
                                 blockchainText.text = Html.fromHtml(blockchainTextHtml, Html.FROM_HTML_MODE_LEGACY)

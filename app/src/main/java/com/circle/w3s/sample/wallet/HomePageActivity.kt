@@ -72,12 +72,18 @@ data class TokenInfo(
 class HomePageActivity : AppCompatActivity() {
 
     // Values to retrieve from the API
+    private var userId = ""
     private var userWalletId = ""
     private var userWalletAddress = ""
-    private var userTokenBalance = ""
-    private var userTokenSymbol = ""
-    private var tokenId = ""
-    private var userId = ""
+
+    private var avaxTokenId = "87a5c41c-fcb4-5973-8c66-72e2ed851ab8"
+    private var avaxTokenSymbol = "AVAX-FUJI"
+    private var userAvaxTokenBalance = "0"
+
+    private var usdcTokenId = "ff47a560-9795-5b7c-adfc-8f47dad9e06a"
+    private var usdcTokenSymbol = "USDC"
+    private var userUSDCTokenBalance = "0"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +93,8 @@ class HomePageActivity : AppCompatActivity() {
 
         // Initialize UI components
         val statusLoadingTextView = binding.statusLoadingTextView
-        val tokenBalanceText = binding.tokenBalanceText
+        val avaxTokenBalanceText = binding.avaxTokenBalanceText
+        val usdcTokenBalanceText = binding.usdcTokenBalanceText
         val refreshButton = binding.refreshbutton
         val receiveButton = binding.receiveBtn
         val sendButton = binding.SendBtn
@@ -106,7 +113,7 @@ class HomePageActivity : AppCompatActivity() {
         val delayMilliseconds = 2500L
         loadingDialog.show()
         // Start the network request to get user wallet id
-        getUserWalletId(apiKey, userToken, statusLoadingTextView, tokenBalanceText, delayMilliseconds, walletAddressText, copyButton, loadingDialog)
+        getUserWalletId(apiKey, userToken, statusLoadingTextView, avaxTokenBalanceText, usdcTokenBalanceText, delayMilliseconds, walletAddressText, copyButton, loadingDialog)
 
         sendButton.setOnClickListener{
             Log.d("HomePageActivity", "On Send button press")
@@ -119,8 +126,10 @@ class HomePageActivity : AppCompatActivity() {
             intent.putExtra("userToken", userToken)
             intent.putExtra("encryptionKey", encryptionKey)
             intent.putExtra("walletId", userWalletId)
-            intent.putExtra("tokenId", tokenId)
-            intent.putExtra("tokenBalance", userTokenBalance)
+            intent.putExtra("avaxTokenId", avaxTokenId)
+            intent.putExtra("avaxTokenBalance", userAvaxTokenBalance)
+            intent.putExtra("usdcTokenId", usdcTokenId)
+            intent.putExtra("usdcTokenBalance", userUSDCTokenBalance)
 
             // Start the new activity
             startActivity(intent)
@@ -182,7 +191,7 @@ class HomePageActivity : AppCompatActivity() {
             // Delay before making network requests (2 seconds)
             val delayInMilliseconds = 2000L
             if (userWalletId.isNotEmpty()){
-                getUserWalletId(apiKey, userToken, statusLoadingTextView, tokenBalanceText, delayInMilliseconds, walletAddressText, copyButton, loadingDialog)
+                getUserWalletId(apiKey, userToken, statusLoadingTextView, avaxTokenBalanceText, usdcTokenBalanceText, delayInMilliseconds, walletAddressText, copyButton, loadingDialog)
             }
         }
 
@@ -191,7 +200,8 @@ class HomePageActivity : AppCompatActivity() {
     private fun getUserTokenBalance(
         apiKey: String?,
         userToken: String?,
-        tokenBalanceText: TextView,
+        avaxTokenBalanceText: TextView,
+        usdcTokenBalanceText: TextView,
         statusLoadingTextView: TextView,
         walletAddressText: TextView,
         copyButton: Button,
@@ -222,19 +232,41 @@ class HomePageActivity : AppCompatActivity() {
                     //NOTE: when creating wallet for first time, user does not have any token balance
                     //calling the get token balance endpoint will return empty array, only when
                     //user wallet has some balance tokens will the data be returned.
+                    Log.d("HomePageActivity", "Token Balances data: $tokenBalanceArrayData")
+
+                    //filter to get user token balance (USDC and AVAX-FUJI)
+                    val avaxTestnetTokenData = tokenBalanceArrayData.filter {
+                        token -> token.token.name == "Avalanche-Fuji"
+                    }
+
+                    val usdcTokenData = tokenBalanceArrayData.filter {
+                            token -> token.token.name == "USD Coin"
+                    }
 
                     if (tokenBalanceArrayData.isNotEmpty()) {
-                        // Assuming array element 1 is AVAX FUJI token
-                        val firstWalletTokenData = tokenBalanceArrayData[0]
-                        userTokenBalance = firstWalletTokenData.amount
-                        userTokenSymbol = firstWalletTokenData.token.symbol
-                        tokenId = firstWalletTokenData.token.id
+                        if(avaxTestnetTokenData.isNotEmpty()){
+                            val avaxWalletDetails = avaxTestnetTokenData[0]
+                            userAvaxTokenBalance = avaxWalletDetails.amount
+                            avaxTokenSymbol = avaxWalletDetails.token.symbol
+                            avaxTokenId = avaxWalletDetails.token.id
+                        }
 
+                        if(usdcTokenData.isNotEmpty()){
+                            val usdcWalletDetail = usdcTokenData[0]
+                            userUSDCTokenBalance = usdcWalletDetail.amount
+                            usdcTokenSymbol = usdcWalletDetail.token.symbol
+                            usdcTokenId = usdcWalletDetail.token.id
+                        }
 
                         // Update UI components
                         runOnUiThread {
                             statusLoadingTextView.text = "Success! You can now proceed to send/receive or view past transactions."
-                            tokenBalanceText.text = "$userTokenSymbol: $userTokenBalance"
+                            if (avaxTestnetTokenData.isNotEmpty()) {
+                                avaxTokenBalanceText.text = "$avaxTokenSymbol: $userAvaxTokenBalance"
+                            }
+                            if(usdcTokenData.isNotEmpty()){
+                                usdcTokenBalanceText.text = "$usdcTokenSymbol: $userUSDCTokenBalance"
+                            }
                             loadingDialog.dismiss()
                             walletAddressText.visibility = View.VISIBLE
                             copyButton.visibility = View.VISIBLE
@@ -245,7 +277,6 @@ class HomePageActivity : AppCompatActivity() {
                         // Update UI components
                         runOnUiThread {
                             statusLoadingTextView.text = "Success! You have no tokens in your wallet, send some AVAX-Fuji tokens to your wallet address."
-//                            tokenBalanceText.text = "$userTokenSymbol: $userTokenBalance"
                             loadingDialog.dismiss()
                             walletAddressText.visibility = View.VISIBLE
                             copyButton.visibility = View.VISIBLE
@@ -271,7 +302,8 @@ class HomePageActivity : AppCompatActivity() {
         apiKey: String?,
         userToken: String?,
         statusLoadingTextView: TextView,
-        tokenBalanceText: TextView,
+        avaxTokenBalanceText: TextView,
+        usdcTokenBalanceText: TextView,
         delayMilliseconds: Long,
         walletAddressText: TextView,
         copyButton: Button,
@@ -309,7 +341,7 @@ class HomePageActivity : AppCompatActivity() {
                         userId = firstWallet.userId
 
                         // Call the function to get user token balance
-                        getUserTokenBalance(apiKey, userToken, tokenBalanceText, statusLoadingTextView, walletAddressText, copyButton, loadingDialog)
+                        getUserTokenBalance(apiKey, userToken, avaxTokenBalanceText, usdcTokenBalanceText, statusLoadingTextView, walletAddressText, copyButton, loadingDialog)
                     } else {
                         // Handle the case when the array is empty
                         Log.e("HomePageActivity", "No Wallets found for user.")

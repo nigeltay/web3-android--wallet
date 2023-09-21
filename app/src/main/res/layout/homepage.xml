@@ -106,9 +106,9 @@
         app:layout_constraintVertical_bias="0.861" />
 
     <TextView
-        android:id="@+id/tokenBalanceText"
+        android:id="@+id/avaxTokenBalanceText"
         android:layout_width="290dp"
-        android:layout_height="110dp"
+        android:layout_height="35dp"
         android:text="AVAX-FUJI:  0"
         android:textAlignment="center"
         android:textColor="@color/black"
@@ -118,7 +118,22 @@
         app:layout_constraintHorizontal_bias="0.471"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.745" />
+        app:layout_constraintVertical_bias="0.666" />
+
+    <TextView
+        android:id="@+id/usdcTokenBalanceText"
+        android:layout_width="290dp"
+        android:layout_height="35dp"
+        android:text="USDC:  0"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.471"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.716" />
 
     <TextView
         android:id="@+id/statusLoadingTextView"

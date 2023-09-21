@@ -1,5 +1,6 @@
 package com.circle.w3s.sample.wallet
 
+import android.R
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -15,6 +16,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import com.google.gson.Gson
 import android.content.Intent
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import java.util.UUID
 import com.circle.w3s.sample.wallet.ui.main.LoadingDialog
 
@@ -40,16 +44,47 @@ class SendTokenActivity: AppCompatActivity() {
         val sendButton = binding.sendTransferButton
         val backButton = binding.backButton
 
+        val dropdownlist = binding.tokenSpinner
+        var selectedToken = "AVAX-FUJI"
+
+        // Define an array of items to populate the Spinner
+        val items = arrayOf("AVAX-FUJI", "USDC")
+
+        // Create an ArrayAdapter using the array of items and a default spinner layout
+        val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, items)
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        // Set the adapter to the Spinner
+        dropdownlist.adapter = adapter
+
         // Retrieve apiKey and userId from the intent extras
         val apiKey = intent.getStringExtra("apiKey")
         val userToken = intent.getStringExtra("userToken")
         val encryptionKey = intent.getStringExtra("encryptionKey")
-        val tokenId = intent.getStringExtra("tokenId")
         val walletId = intent.getStringExtra("walletId")
-        val avaxTokenBalance = intent.getStringExtra("tokenBalance")
+        val avaxTokenId = intent.getStringExtra("avaxTokenId")
+        val avaxTokenBalance = intent.getStringExtra("avaxTokenBalance")
+        val usdcTokenId = intent.getStringExtra("usdcTokenId")
+        val usdcTokenBalance = intent.getStringExtra("usdcTokenBalance")
 
 
-        Log.d("SendTokenActivity", "Msg: ${avaxTokenBalance}")
+        Log.d("SendTokenActivity", "Msg: ${avaxTokenId}, ${avaxTokenBalance}, ${usdcTokenId}, $usdcTokenBalance")
+
+        // Set up the OnItemSelectedListener
+        dropdownlist.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedItem = items[position] // Get the selected item
+                selectedToken = selectedItem
+                Log.d("SendTokenActivity", "$selectedToken")
+                // Do something with the selected item, e.g., display it or store it.
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Handle the case where nothing is selected (optional)
+            }
+        }
 
         backButton.setOnClickListener {
             //redirect to send tokens page
@@ -69,7 +104,9 @@ class SendTokenActivity: AppCompatActivity() {
 
         sendButton.setOnClickListener {
             Log.d("SendTokenActivity", "On Send button click.")
-            val tokenBalance = avaxTokenBalance?.toDouble()
+            val avaxTokenBalance = avaxTokenBalance?.toDouble()
+            val usdcTokenBalance = usdcTokenBalance?.toDouble()
+
             val userInputDecimal = tokenAmountUserInput.text.toString().trim().toDouble()
 
             //validate input fields
@@ -85,8 +122,16 @@ class SendTokenActivity: AppCompatActivity() {
                 tokenAmountUserInput.error = "Token amount is required."
             }
 
-            if(userInputDecimal > tokenBalance!! * 0.9){
-                tokenAmountUserInput.error = "Token amount cannot be more than wallet token balance. Need to account for gas fees as well."
+            if(selectedToken == "AVAX-FUJI"){
+                if(userInputDecimal > avaxTokenBalance!! * 0.9){
+                    tokenAmountUserInput.error = "Token amount cannot be more than wallet token balance. Need to account for gas fees as well."
+                }
+            }
+
+            if(selectedToken == "USDC"){
+                if(userInputDecimal >= usdcTokenBalance!!){
+                    tokenAmountUserInput.error = "Token amount cannot be more than wallet token balance. Need to account for gas fees as well."
+                }
             }
 
             if(recipientWalletAddressUserInput.error == null && tokenAmountUserInput.error == null){
@@ -96,12 +141,19 @@ class SendTokenActivity: AppCompatActivity() {
                 loadingDialog.show()
 
                 Log.d("SendTokenActivity", "NEW BODY TEST")
+
+                val apiCallTokenId = if (selectedToken == "AVAX-FUJI") {
+                    avaxTokenId
+                } else {
+                    usdcTokenId
+                }
+
                 //api call
                 GlobalScope.launch(Dispatchers.IO) {
                     val client = OkHttpClient()
 
                     val mediaType = "application/json".toMediaTypeOrNull()
-                    val body = "{\"amounts\":[\"$tokenAmountInput\"],\"destinationAddress\":\"${recipientWalletAddress}\",\"idempotencyKey\":\"${uuid}\",\"feeLevel\":\"MEDIUM\",\"tokenId\":\"${tokenId}\",\"walletId\":\"${walletId}\"}".toRequestBody(mediaType)
+                    val body = "{\"amounts\":[\"$tokenAmountInput\"],\"destinationAddress\":\"${recipientWalletAddress}\",\"idempotencyKey\":\"${uuid}\",\"feeLevel\":\"MEDIUM\",\"tokenId\":\"${apiCallTokenId}\",\"walletId\":\"${walletId}\"}".toRequestBody(mediaType)
                     val request = Request.Builder()
                         .url("https://api.circle.com/v1/w3s/user/transactions/transfer")
                         .post(body)
