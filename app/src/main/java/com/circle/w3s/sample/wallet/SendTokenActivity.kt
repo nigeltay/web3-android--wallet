@@ -104,10 +104,11 @@ class SendTokenActivity: AppCompatActivity() {
 
         sendButton.setOnClickListener {
             Log.d("SendTokenActivity", "On Send button click.")
+            recipientWalletAddressUserInput.error = null
+            tokenAmountUserInput.error = null
+
             val avaxTokenBalance = avaxTokenBalance?.toDouble()
             val usdcTokenBalance = usdcTokenBalance?.toDouble()
-
-            val userInputDecimal = tokenAmountUserInput.text.toString().trim().toDouble()
 
             //validate input fields
             val recipientWalletAddress = recipientWalletAddressUserInput.text.toString().trim()
@@ -122,6 +123,8 @@ class SendTokenActivity: AppCompatActivity() {
                 tokenAmountUserInput.error = "Token amount is required."
             }
 
+            val userInputDecimal = tokenAmountUserInput.text.toString().trim().toDouble()
+            Log.d("SendTokenActivity", "$selectedToken")
             if(selectedToken == "AVAX-FUJI"){
                 if(userInputDecimal > avaxTokenBalance!! * 0.9){
                     tokenAmountUserInput.error = "Token amount cannot be more than wallet token balance. Need to account for gas fees as well."
