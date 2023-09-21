@@ -269,7 +269,7 @@ class MainFragment : Fragment(), EventListener {
                     //pass data to next page, user only needs to input APP ID
                     intent.putExtra("apiKey", apiKey)
                     intent.putExtra("userToken", userToken)
-
+                    intent.putExtra("encryptionKey", encryptionKey)
 
                     // Start the new activity
                     requireActivity().startActivity(intent)

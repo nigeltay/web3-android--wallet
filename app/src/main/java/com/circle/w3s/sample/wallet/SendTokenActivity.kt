@@ -70,7 +70,6 @@ class SendTokenActivity: AppCompatActivity() {
         val usdcTokenBalance = intent.getStringExtra("usdcTokenBalance")
 
 
-        Log.d("SendTokenActivity", "Msg: ${avaxTokenId}, ${avaxTokenBalance}, ${usdcTokenId}, $usdcTokenBalance")
 
         // Set up the OnItemSelectedListener
         dropdownlist.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

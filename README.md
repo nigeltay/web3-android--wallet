@@ -101,13 +101,13 @@ Click the submit button.
 
 <img src="readme_images/walletInfo.png" alt="drawing" width="250"/>
 
-9. Now transfer some 'AVAX-testnet' tokens to that address that you have copied. E.g. You can transfer from your metamask wallet to that address.
+9. Now transfer some `AVAX-FUJI` or `USDC` tokens to that address that you have copied. E.g. You can transfer from your metamask wallet to that address.
 
 Get some avax tokens from 
  - https://faucets.chain.link/fuji
  - https://test.core.app/tools/testnet-faucet/?subnet=c&token=c
 
-Once, you have transferred some avax tokens, click on the refresh icon located beside the token balance to see your updated tokens balance.
+Once, you have transferred some avax or usdc tokens, click on the refresh icon located beside the token balance to see your updated tokens balance.
 
 <img src="readme_images/updatedBalance.png" alt="drawing" width="250"/>
 
@@ -126,10 +126,10 @@ If you have created a wallet with the instructions from the previous section and
 
 1. Click `Send` button from the wallet info homepage.
 
-2. Input avax fuji token amount and recipient wallet address.
+2. Firstly choose either `USDC` or `AVAX-FUJI` from the dropdown list. Input token amount and recipient wallet address.
 (Amount cannot be more than balance or exactly token balance as gas fess are required as well. Transfer a small amount for testing. For recipient wallet, just use an exisiting Metamask wallet address). Click `Send`.
 
-<img src="readme_images/makeTransfer.png" alt="drawing" width="250"/>
+<img src="readme_images/makeTransfer.png" alt="drawing" width="300"/>
 
 3. In the next page, similar to previous section when creating a wallet input your `APP ID` and do not edit the other values as the values are taken from a API response for creating a challenge ID. Click execute.
 
