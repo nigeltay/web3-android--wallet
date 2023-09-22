@@ -99,6 +99,7 @@ class HomePageActivity : AppCompatActivity() {
         val receiveButton = binding.receiveBtn
         val sendButton = binding.SendBtn
         val viewTransactions = binding.viewTransactionBtn
+        val logoutButton = binding.logoutButton
         val copyButton = binding.copyButton
         copyButton.visibility = View.INVISIBLE
         val walletAddressText = binding.walletAddressTextView
@@ -139,6 +140,16 @@ class HomePageActivity : AppCompatActivity() {
             // Finish the current activity if needed
             finish()
 
+        }
+
+        logoutButton.setOnClickListener {
+            //redirect to view home page
+            val intent = Intent(this@HomePageActivity, WalletCreationActivity::class.java)
+            // Start the new activity
+            startActivity(intent)
+
+            // Finish the current activity if needed
+            finish()
         }
 
         viewTransactions.setOnClickListener {
@@ -265,10 +276,10 @@ class HomePageActivity : AppCompatActivity() {
                         runOnUiThread {
                             statusLoadingTextView.text = "Success! You can now proceed to send/receive or view past transactions."
                             if (avaxTestnetTokenData.isNotEmpty()) {
-                                avaxTokenBalanceText.text = "$avaxTokenSymbol: $userAvaxTokenBalance"
+                                avaxTokenBalanceText.text = " $avaxTokenSymbol: $userAvaxTokenBalance"
                             }
                             if(usdcTokenData.isNotEmpty()){
-                                usdcTokenBalanceText.text = "$usdcTokenSymbol: $userUSDCTokenBalance"
+                                usdcTokenBalanceText.text = " $usdcTokenSymbol: $userUSDCTokenBalance"
                             }
                             loadingDialog.dismiss()
                             walletAddressText.visibility = View.VISIBLE
