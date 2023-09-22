@@ -68,7 +68,7 @@ class SendTokenActivity: AppCompatActivity() {
         val avaxTokenBalance = intent.getStringExtra("avaxTokenBalance")
         val usdcTokenId = intent.getStringExtra("usdcTokenId")
         val usdcTokenBalance = intent.getStringExtra("usdcTokenBalance")
-
+        val appId = intent.getStringExtra("appId")
 
 
         // Set up the OnItemSelectedListener
@@ -93,6 +93,7 @@ class SendTokenActivity: AppCompatActivity() {
             intent.putExtra("apiKey", apiKey)
             intent.putExtra("userToken", userToken)
             intent.putExtra("encryptionKey", encryptionKey)
+            intent.putExtra("appId", appId)
 
             // Start the new activity
             startActivity(intent)
@@ -132,7 +133,7 @@ class SendTokenActivity: AppCompatActivity() {
 
             if(selectedToken == "USDC"){
                 if(userInputDecimal >= usdcTokenBalance!!){
-                    tokenAmountUserInput.error = "Token amount cannot be more than wallet token balance. Need to account for gas fees as well."
+                    tokenAmountUserInput.error = "Token amount cannot be more than wallet token balance."
                 }
             }
 
@@ -187,6 +188,7 @@ class SendTokenActivity: AppCompatActivity() {
                                 intent.putExtra("userToken", userToken)
                                 intent.putExtra("encryptionKey", encryptionKey)
                                 intent.putExtra("challengeId", challengeIdResponse)
+                                intent.putExtra("appId", appId)
 
                                 // Start the new activity
                                 startActivity(intent)

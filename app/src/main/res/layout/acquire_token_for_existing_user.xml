@@ -13,10 +13,13 @@
         android:layout_marginTop="48dp"
         android:layout_marginEnd="41dp"
         android:background="@color/white"
+        android:paddingStart="10dp"
+        android:paddingRight="10dp"
         android:text="@string/circle"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/black"
         android:textSize="60sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent" />

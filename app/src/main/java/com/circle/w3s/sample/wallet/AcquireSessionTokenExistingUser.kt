@@ -40,6 +40,7 @@ class AcquireSessionTokenExistingUser: AppCompatActivity()  {
         // Retrieve apiKey and userId from the intent extras
         val apiKey = intent.getStringExtra("apiKey")
         val userId = intent.getStringExtra("userId")
+        val appId = intent.getStringExtra("appId")
 
         Log.d("AcquireSessionTokenExistingUserActivity", "Msg: ${apiKey}, $userId")
         //api call
@@ -81,6 +82,7 @@ class AcquireSessionTokenExistingUser: AppCompatActivity()  {
                         intent.putExtra("apiKey", apiKey)
                         intent.putExtra("userToken", userToken)
                         intent.putExtra("encryptionKey", encryptionKey)
+                        intent.putExtra("appId", appId)
 
                         // Start the new activity
                         startActivity(intent)

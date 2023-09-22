@@ -43,7 +43,11 @@ pwsdk.maven.password=<GITHUB_PAT>
   - [Creating a personal access token (classic)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
   - [Creating a fine-grained personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token)
 
- 4. Sync your project with gradle files by clicking on the button in the red box as shown below.
+ 4. Go to `WalletCreationActivity.kt` file located at `app/src/main/java/com/circle/w3s/sample/wallet/` directory and replace `appId` variable with your own `APP_ID`.
+
+<img src="readme_images/replaceAppId.png" alt="drawing" width="900"/>
+
+ 5. Sync your project with gradle files by clicking on the button in the red box as shown below.
  
 <img src="readme_images/syncGradle.png" alt="drawing" width="500"/>
 

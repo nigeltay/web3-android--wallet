@@ -56,14 +56,16 @@ class MainFragment : Fragment(), EventListener {
     private var userToken: String? = null
     private var encryptionKey: String? = null
     private var challengeId: String? = null
+    private var appId: String? = null
 
     companion object {
-        fun newInstance(apiKey: String?, userToken: String?, encryptionKey: String?, challengeId: String?) = MainFragment().apply {
+        fun newInstance(apiKey: String?, userToken: String?, encryptionKey: String?, challengeId: String?, appId: String?) = MainFragment().apply {
             arguments = Bundle().apply {
                 putString("apiKey", apiKey)
                 putString("userToken", userToken)
                 putString("encryptionKey", encryptionKey)
                 putString("challengeId", challengeId)
+                putString("appId", appId)
             }
         }
     }
@@ -78,6 +80,7 @@ class MainFragment : Fragment(), EventListener {
             userToken = it.getString("userToken")
             encryptionKey = it.getString("encryptionKey")
             challengeId = it.getString("challengeId")
+            appId = it.getString("appId")
         }
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
     }
@@ -109,7 +112,6 @@ class MainFragment : Fragment(), EventListener {
             val versionName = getVersionName(it)
             binding.version.text = versionName
         }
-        binding.execute.setOnClickListener { executePwSdk() }
         viewModel.executeFormState.observe(viewLifecycleOwner, Observer {
             val executeState = it ?: return@Observer
             binding.execute.isEnabled = executeState.isDataValid
@@ -137,6 +139,11 @@ class MainFragment : Fragment(), EventListener {
             binding.challengeId.inputValue.text = editableChallengeId
         }
 
+        if (appId != null) {
+            val editableAppId = Editable.Factory.getInstance().newEditable(appId)
+            binding.addId.inputValue.text = editableAppId
+        }
+
         binding.endpoint.inputValue.doAfterTextChanged {
             executeDataChanged()
         }
@@ -152,6 +159,10 @@ class MainFragment : Fragment(), EventListener {
         binding.challengeId.inputValue.doAfterTextChanged {
             executeDataChanged()
         }
+
+        //binding.execute.setOnClickListener { executePwSdk() }
+        executePwSdk()
+
     }
     fun setInProgress(inProgress: Boolean) {
         binding.execute.setClickable(!inProgress)
@@ -270,6 +281,7 @@ class MainFragment : Fragment(), EventListener {
                     intent.putExtra("apiKey", apiKey)
                     intent.putExtra("userToken", userToken)
                     intent.putExtra("encryptionKey", encryptionKey)
+                    intent.putExtra("appId", appId)
 
                     // Start the new activity
                     requireActivity().startActivity(intent)

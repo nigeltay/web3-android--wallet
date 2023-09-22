@@ -45,6 +45,7 @@ class InitialiseUserWalletActivity  : AppCompatActivity()  {
         //val userId = intent.getStringExtra("userId")
         val userToken = intent.getStringExtra("userToken")
         val encryptionKey = intent.getStringExtra("encryptionKey")
+        val appId = intent.getStringExtra("appId")
         val uuid = UUID.randomUUID()
 
         //call api to initialize the User's Account and Acquire the Challenge ID to create wallet
@@ -84,7 +85,7 @@ class InitialiseUserWalletActivity  : AppCompatActivity()  {
                         loadingProgressBar.visibility = android.view.View.INVISIBLE
 
                         // change header text
-                        statusText.text = "SUCCESS! Enter Your APP ID found in Circle Web3 Account in the next page."
+                        statusText.text = "SUCCESS! Click next to proceed to PIN setup."
 
 
                     } else {
@@ -111,6 +112,7 @@ class InitialiseUserWalletActivity  : AppCompatActivity()  {
                 intent.putExtra("userToken", userToken)
                 intent.putExtra("encryptionKey", encryptionKey)
                 intent.putExtra("challengeId", challengeIdValue)
+                intent.putExtra("appId", appId)
 
                 // Start the new activity
                 startActivity(intent)

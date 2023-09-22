@@ -70,6 +70,8 @@ class WalletCreationActivity : AppCompatActivity() {
         val listUserTitle = binding.listUserTitle
         val apiResponseTextView = binding.apiResponseTextView
 
+        val appId = "YOUR_CIRCLE_WEB3_APP_ID" //REPLACE VALUE WITH YOUR APP ID
+
         // Initially, hide the EditText fields and TextView
         apiKeyEditText.visibility = android.view.View.INVISIBLE
         userIdEditText.visibility = android.view.View.INVISIBLE
@@ -183,6 +185,7 @@ class WalletCreationActivity : AppCompatActivity() {
                                 // Pass the apiKey and userId as extras to the new activity
                                 intent.putExtra("apiKey", apiKey)
                                 intent.putExtra("userId", userId)
+                                intent.putExtra("appId", appId)
 
                                 // Start the new activity
                                 startActivity(intent)
@@ -305,6 +308,7 @@ class WalletCreationActivity : AppCompatActivity() {
                                     //pass data to next page
                                     intent.putExtra("apiKey", apiKey)
                                     intent.putExtra("userId", userId)
+                                    intent.putExtra("appId", appId)
                                     // Start the new activity
                                     startActivity(intent)
 

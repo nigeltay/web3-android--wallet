@@ -28,10 +28,13 @@
         android:layout_marginStart="11dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="41dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text="@string/circle"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/black"
         android:textSize="60sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
@@ -218,6 +221,19 @@
         app:srcCompat="@drawable/avalanche_logo" />
 
     <ImageView
+        android:id="@+id/avaxlogoImageView2"
+        android:layout_width="49dp"
+        android:layout_height="35dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.712"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.436"
+        app:srcCompat="@drawable/avalanche_logo" />
+
+    <ImageView
         android:id="@+id/usdclogoImageView"
         android:layout_width="49dp"
         android:layout_height="35dp"
@@ -228,5 +244,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.716"
         app:srcCompat="@drawable/usdc_logo" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="180dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="57dp"
+        android:layout_marginEnd="153dp"
+        android:text="Avalanche Fuji Testnet"
+        android:textAlignment="center"
+        android:textColor="#FF0000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.442"
+        tools:text="Avalanche Fuji Testnet" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

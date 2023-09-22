@@ -108,6 +108,7 @@ class HomePageActivity : AppCompatActivity() {
         val apiKey = intent.getStringExtra("apiKey")
         val userToken = intent.getStringExtra("userToken")
         val encryptionKey = intent.getStringExtra("encryptionKey")
+        val appId = intent.getStringExtra("appId")
 
         // Delay before making network requests (5 seconds)
         val delayMilliseconds = 2500L
@@ -130,6 +131,7 @@ class HomePageActivity : AppCompatActivity() {
             intent.putExtra("avaxTokenBalance", userAvaxTokenBalance)
             intent.putExtra("usdcTokenId", usdcTokenId)
             intent.putExtra("usdcTokenBalance", userUSDCTokenBalance)
+            intent.putExtra("appId", appId)
 
             // Start the new activity
             startActivity(intent)
@@ -149,6 +151,7 @@ class HomePageActivity : AppCompatActivity() {
             intent.putExtra("userToken", userToken)
             intent.putExtra("encryptionKey", encryptionKey)
             intent.putExtra("userId", userId)
+            intent.putExtra("appId", appId)
 
             // Start the new activity
             startActivity(intent)

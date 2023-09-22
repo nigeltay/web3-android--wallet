@@ -29,10 +29,11 @@ class MainActivity : AppCompatActivity() {
         val userToken = intent.getStringExtra("userToken")
         val encryptionKey = intent.getStringExtra("encryptionKey")
         val challengeId = intent.getStringExtra("challengeId")
+        val appId = intent.getStringExtra("appId")
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MainFragment.newInstance(apiKey, userToken, encryptionKey, challengeId))
+                .replace(R.id.container, MainFragment.newInstance(apiKey, userToken, encryptionKey, challengeId, appId))
                 .commitNow()
         }
     }

@@ -111,6 +111,7 @@ class TransactionsActivity: AppCompatActivity()  {
         val userToken = intent.getStringExtra("userToken")
         val encryptionKey = intent.getStringExtra("encryptionKey")
         val userId = intent.getStringExtra("userId")
+        val appId = intent.getStringExtra("appId")
         val loadingDialog = LoadingDialog(this@TransactionsActivity, "Getting past transaction data, please wait...") // Specify the loading text here
         loadingDialog.show()
 
@@ -306,6 +307,7 @@ class TransactionsActivity: AppCompatActivity()  {
             intent.putExtra("apiKey", apiKey)
             intent.putExtra("userToken", userToken)
             intent.putExtra("encryptionKey", encryptionKey)
+            intent.putExtra("appId", appId)
 
             // Start the new activity
             startActivity(intent)
