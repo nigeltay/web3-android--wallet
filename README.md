@@ -86,7 +86,7 @@ Click the submit button.
 
 <img src="readme_images/createUserSuccess.png" alt="drawing" width="250"/>
 
-4. Click next. In the next screen, input in your `APP ID` taken associated to your circle account from your console and input it into the app id field. `(Do not edit the other fields. The other fields have been pre populated with the values returned from the API calls).` Click execute once APP ID has been inputted.
+4. Click next. You will be redirected to input PIN.
 
 
 5. In the next screen, enter a pin and remember it. The pin will be used to sign transactions for transfers etc.
