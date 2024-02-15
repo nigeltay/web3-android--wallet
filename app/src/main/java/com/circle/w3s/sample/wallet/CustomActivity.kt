@@ -36,7 +36,7 @@ class CustomActivity: AppCompatActivity() {
      * Bring SDK UI to the front and finish the Activity.
      */
     private fun goBackToSdkUi(){
-        WalletSdk.moveTaskToFront()
+        WalletSdk.moveTaskToFront(this)
         finish()
 
     }

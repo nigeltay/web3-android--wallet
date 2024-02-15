@@ -241,7 +241,7 @@ class MainFragment : Fragment(), EventListener {
             activity,
             userToken,
             encryptionKey,
-            arrayOf<String>(challengeId),
+            arrayOf(challengeId),
             object : Callback<ExecuteResult> {
                 override fun onError(error: Throwable): Boolean {
                     setInProgress(false)
@@ -266,8 +266,9 @@ class MainFragment : Fragment(), EventListener {
                     return false // App won't handle next step, SDK will finish the Activity.
                 }
 
-                override fun onWarning(p0: ExecuteWarning?, p1: ExecuteResult?): Boolean {
+                override fun onWarning(warning: ExecuteWarning, p1: ExecuteResult?): Boolean {
                     TODO("Not yet implemented")
+                    return false
                 }
 
                 override fun onResult(result: ExecuteResult) {
@@ -297,7 +298,7 @@ class MainFragment : Fragment(), EventListener {
             })
     }
 
-    override fun onEvent(event: ExecuteEvent?) {
+    override fun onEvent(event: ExecuteEvent) {
         context?.let {
             if (event != null) {
                 goCustom(it, event.name)
