@@ -76,8 +76,8 @@ class HomePageActivity : AppCompatActivity() {
     private var userWalletId = ""
     private var userWalletAddress = ""
 
-    private var avaxTokenId = "87a5c41c-fcb4-5973-8c66-72e2ed851ab8"
-    private var avaxTokenSymbol = "AVAX-FUJI"
+    private var avaxTokenId = "979869da-9115-5f7d-917d-12d434e56ae7"
+    private var avaxTokenSymbol = "ETH-SEPOLIA"
     private var userAvaxTokenBalance = "0"
 
     private var usdcTokenId = "ff47a560-9795-5b7c-adfc-8f47dad9e06a"
@@ -93,7 +93,7 @@ class HomePageActivity : AppCompatActivity() {
 
         // Initialize UI components
         val statusLoadingTextView = binding.statusLoadingTextView
-        val avaxTokenBalanceText = binding.avaxTokenBalanceText
+        val avaxTokenBalanceText = binding.ethTokenBalanceText
         val usdcTokenBalanceText = binding.usdcTokenBalanceText
         val refreshButton = binding.refreshbutton
         val receiveButton = binding.receiveBtn
@@ -248,9 +248,9 @@ class HomePageActivity : AppCompatActivity() {
                     //user wallet has some balance tokens will the data be returned.
                     Log.d("HomePageActivity", "Token Balances data: $tokenBalanceArrayData")
 
-                    //filter to get user token balance (USDC and AVAX-FUJI)
+                    //filter to get user token balance (USDC and ETH-SEPOLIA)
                     val avaxTestnetTokenData = tokenBalanceArrayData.filter {
-                        token -> token.token.name == "Avalanche-Fuji"
+                        token -> token.token.name == "Ethereum-Sepolia"
                     }
 
                     val usdcTokenData = tokenBalanceArrayData.filter {
@@ -290,7 +290,7 @@ class HomePageActivity : AppCompatActivity() {
                     } else {
                         // Update UI components
                         runOnUiThread {
-                            statusLoadingTextView.text = "Success! You have no tokens in your wallet, send some AVAX-Fuji tokens to your wallet address."
+                            statusLoadingTextView.text = "Success! You have no tokens in your wallet, send some Ethereum-Sepolia tokens to your wallet address."
                             loadingDialog.dismiss()
                             walletAddressText.visibility = View.VISIBLE
                             copyButton.visibility = View.VISIBLE

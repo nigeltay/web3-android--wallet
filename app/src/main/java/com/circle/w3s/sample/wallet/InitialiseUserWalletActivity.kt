@@ -53,7 +53,7 @@ class InitialiseUserWalletActivity  : AppCompatActivity()  {
             val client = OkHttpClient()
 
             val mediaType = "application/json".toMediaTypeOrNull()
-            val body = "{\"blockchains\":[\"AVAX-FUJI\"],\"idempotencyKey\":\"$uuid\"}".toRequestBody(mediaType)
+            val body = "{\"blockchains\":[\"ETH-SEPOLIA\"],\"idempotencyKey\":\"$uuid\"}".toRequestBody(mediaType)
             val request = Request.Builder()
                 .url("https://api.circle.com/v1/w3s/user/initialize")
                 .post(body)

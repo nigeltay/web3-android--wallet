@@ -45,10 +45,10 @@ class SendTokenActivity: AppCompatActivity() {
         val backButton = binding.backButton
 
         val dropdownlist = binding.tokenSpinner
-        var selectedToken = "AVAX-FUJI"
+        var selectedToken = "ETH-SEPOLIA"
 
         // Define an array of items to populate the Spinner
-        val items = arrayOf("AVAX-FUJI", "USDC")
+        val items = arrayOf("ETH-SEPOLIA", "USDC")
 
         // Create an ArrayAdapter using the array of items and a default spinner layout
         val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, items)
@@ -125,7 +125,7 @@ class SendTokenActivity: AppCompatActivity() {
 
             val userInputDecimal = tokenAmountUserInput.text.toString().trim().toDouble()
             Log.d("SendTokenActivity", "$selectedToken")
-            if(selectedToken == "AVAX-FUJI"){
+            if(selectedToken == "ETH-SEPOLIA"){
                 if(userInputDecimal > avaxTokenBalance!! * 0.9){
                     tokenAmountUserInput.error = "Token amount cannot be more than wallet token balance. Need to account for gas fees as well."
                 }
@@ -145,7 +145,7 @@ class SendTokenActivity: AppCompatActivity() {
 
                 Log.d("SendTokenActivity", "NEW BODY TEST")
 
-                val apiCallTokenId = if (selectedToken == "AVAX-FUJI") {
+                val apiCallTokenId = if (selectedToken == "ETH-SEPOLIA") {
                     avaxTokenId
                 } else {
                     usdcTokenId

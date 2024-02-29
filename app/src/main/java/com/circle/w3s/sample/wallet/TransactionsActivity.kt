@@ -119,7 +119,7 @@ class TransactionsActivity: AppCompatActivity()  {
         GlobalScope.launch(Dispatchers.IO) {
             val client = OkHttpClient()
             val request = Request.Builder()
-                .url("https://api.circle.com/v1/w3s/transactions?blockchain=AVAX-FUJI&userId=$userId&pageSize=10")
+                .url("https://api.circle.com/v1/w3s/transactions?blockchain=ETH-SEPOLIA&userId=$userId&pageSize=10")
                 .get()
                 .addHeader("accept", "application/json")
                 .addHeader("authorization", "Bearer $apiKey")
@@ -159,8 +159,8 @@ class TransactionsActivity: AppCompatActivity()  {
                     runOnUiThread {
                         for (transaction in transactions) {
 
-                            val tokenName = if (transaction.tokenId == "87a5c41c-fcb4-5973-8c66-72e2ed851ab8") {
-                                "Avalanche-Fuji"
+                            val tokenName = if (transaction.tokenId == "979869da-9115-5f7d-917d-12d434e56ae7") {
+                                "ETH-SEPOLIA"
                             } else {
                                 "USD Coin"
                             }
@@ -236,7 +236,7 @@ class TransactionsActivity: AppCompatActivity()  {
                                 val transactionTypeTextHtml = "<b>Transaction Type:</b> ${transaction.transactionType}"
                                 transactionTypeText.text = Html.fromHtml(transactionTypeTextHtml, Html.FROM_HTML_MODE_LEGACY)
 
-                                val tokenName = if (transaction.tokenId == "87a5c41c-fcb4-5973-8c66-72e2ed851ab8") {
+                                val tokenName = if (transaction.tokenId == "979869da-9115-5f7d-917d-12d434e56ae7") {
                                     "Avalanche-Fuji"
                                 } else {
                                     "USD Coin"
