@@ -254,7 +254,7 @@ class HomePageActivity : AppCompatActivity() {
                     }
 
                     val usdcTokenData = tokenBalanceArrayData.filter {
-                            token -> token.token.name == "USD Coin"
+                            token -> token.token.name == "USDC"
                     }
 
                     if (tokenBalanceArrayData.isNotEmpty()) {
