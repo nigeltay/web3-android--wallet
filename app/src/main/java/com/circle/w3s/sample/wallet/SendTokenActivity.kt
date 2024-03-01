@@ -64,8 +64,8 @@ class SendTokenActivity: AppCompatActivity() {
         val userToken = intent.getStringExtra("userToken")
         val encryptionKey = intent.getStringExtra("encryptionKey")
         val walletId = intent.getStringExtra("walletId")
-        val avaxTokenId = intent.getStringExtra("avaxTokenId")
-        val avaxTokenBalance = intent.getStringExtra("avaxTokenBalance")
+        val ethTokenId = intent.getStringExtra("ethTokenId")
+        val ethTokenBalance = intent.getStringExtra("ethTokenBalance")
         val usdcTokenId = intent.getStringExtra("usdcTokenId")
         val usdcTokenBalance = intent.getStringExtra("usdcTokenBalance")
         val appId = intent.getStringExtra("appId")
@@ -107,7 +107,7 @@ class SendTokenActivity: AppCompatActivity() {
             recipientWalletAddressUserInput.error = null
             tokenAmountUserInput.error = null
 
-            val avaxTokenBalance = avaxTokenBalance?.toDouble()
+            val ethTokenBalance = ethTokenBalance?.toDouble()
             val usdcTokenBalance = usdcTokenBalance?.toDouble()
 
             //validate input fields
@@ -126,7 +126,7 @@ class SendTokenActivity: AppCompatActivity() {
             val userInputDecimal = tokenAmountUserInput.text.toString().trim().toDouble()
             Log.d("SendTokenActivity", "$selectedToken")
             if(selectedToken == "ETH-SEPOLIA"){
-                if(userInputDecimal > avaxTokenBalance!! * 0.9){
+                if(userInputDecimal > ethTokenBalance!! * 0.9){
                     tokenAmountUserInput.error = "Token amount cannot be more than wallet token balance. Need to account for gas fees as well."
                 }
             }
@@ -146,7 +146,7 @@ class SendTokenActivity: AppCompatActivity() {
                 Log.d("SendTokenActivity", "NEW BODY TEST")
 
                 val apiCallTokenId = if (selectedToken == "ETH-SEPOLIA") {
-                    avaxTokenId
+                    ethTokenId
                 } else {
                     usdcTokenId
                 }

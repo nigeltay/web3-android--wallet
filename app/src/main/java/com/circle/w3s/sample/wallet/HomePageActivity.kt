@@ -76,9 +76,9 @@ class HomePageActivity : AppCompatActivity() {
     private var userWalletId = ""
     private var userWalletAddress = ""
 
-    private var avaxTokenId = "979869da-9115-5f7d-917d-12d434e56ae7"
-    private var avaxTokenSymbol = "ETH-SEPOLIA"
-    private var userAvaxTokenBalance = "0"
+    private var ethTokenId = "979869da-9115-5f7d-917d-12d434e56ae7"
+    private var ethTokenSymbol = "ETH-SEPOLIA"
+    private var userEthTokenBalance = "0"
 
     private var usdcTokenId = "5797fbd6-3795-519d-84ca-ec4c5f80c3b1"
     private var usdcTokenSymbol = "USDC"
@@ -93,7 +93,7 @@ class HomePageActivity : AppCompatActivity() {
 
         // Initialize UI components
         val statusLoadingTextView = binding.statusLoadingTextView
-        val avaxTokenBalanceText = binding.ethTokenBalanceText
+        val ethTokenBalanceText = binding.ethTokenBalanceText
         val usdcTokenBalanceText = binding.usdcTokenBalanceText
         val refreshButton = binding.refreshbutton
         val receiveButton = binding.receiveBtn
@@ -115,7 +115,7 @@ class HomePageActivity : AppCompatActivity() {
         val delayMilliseconds = 2500L
         loadingDialog.show()
         // Start the network request to get user wallet id
-        getUserWalletId(apiKey, userToken, statusLoadingTextView, avaxTokenBalanceText, usdcTokenBalanceText, delayMilliseconds, walletAddressText, copyButton, loadingDialog)
+        getUserWalletId(apiKey, userToken, statusLoadingTextView, ethTokenBalanceText, usdcTokenBalanceText, delayMilliseconds, walletAddressText, copyButton, loadingDialog)
 
         sendButton.setOnClickListener{
             Log.d("HomePageActivity", "On Send button press")
@@ -128,8 +128,8 @@ class HomePageActivity : AppCompatActivity() {
             intent.putExtra("userToken", userToken)
             intent.putExtra("encryptionKey", encryptionKey)
             intent.putExtra("walletId", userWalletId)
-            intent.putExtra("avaxTokenId", avaxTokenId)
-            intent.putExtra("avaxTokenBalance", userAvaxTokenBalance)
+            intent.putExtra("ethTokenId", ethTokenId)
+            intent.putExtra("ethTokenBalance", userEthTokenBalance)
             intent.putExtra("usdcTokenId", usdcTokenId)
             intent.putExtra("usdcTokenBalance", userUSDCTokenBalance)
             intent.putExtra("appId", appId)
@@ -205,7 +205,7 @@ class HomePageActivity : AppCompatActivity() {
             // Delay before making network requests (2 seconds)
             val delayInMilliseconds = 2000L
             if (userWalletId.isNotEmpty()){
-                getUserWalletId(apiKey, userToken, statusLoadingTextView, avaxTokenBalanceText, usdcTokenBalanceText, delayInMilliseconds, walletAddressText, copyButton, loadingDialog)
+                getUserWalletId(apiKey, userToken, statusLoadingTextView, ethTokenBalanceText, usdcTokenBalanceText, delayInMilliseconds, walletAddressText, copyButton, loadingDialog)
             }
         }
 
@@ -214,7 +214,7 @@ class HomePageActivity : AppCompatActivity() {
     private fun getUserTokenBalance(
         apiKey: String?,
         userToken: String?,
-        avaxTokenBalanceText: TextView,
+        ethTokenBalanceText: TextView,
         usdcTokenBalanceText: TextView,
         statusLoadingTextView: TextView,
         walletAddressText: TextView,
@@ -249,7 +249,7 @@ class HomePageActivity : AppCompatActivity() {
                     Log.d("HomePageActivity", "Token Balances data: $tokenBalanceArrayData")
 
                     //filter to get user token balance (USDC and ETH-SEPOLIA)
-                    val avaxTestnetTokenData = tokenBalanceArrayData.filter {
+                    val ethTestnetTokenData = tokenBalanceArrayData.filter {
                         token -> token.token.name == "Ethereum-Sepolia"
                     }
 
@@ -258,11 +258,11 @@ class HomePageActivity : AppCompatActivity() {
                     }
 
                     if (tokenBalanceArrayData.isNotEmpty()) {
-                        if(avaxTestnetTokenData.isNotEmpty()){
-                            val avaxWalletDetails = avaxTestnetTokenData[0]
-                            userAvaxTokenBalance = avaxWalletDetails.amount
-                            avaxTokenSymbol = avaxWalletDetails.token.symbol
-                            avaxTokenId = avaxWalletDetails.token.id
+                        if(ethTestnetTokenData.isNotEmpty()){
+                            val ethWalletDetails = ethTestnetTokenData[0]
+                            userEthTokenBalance = ethWalletDetails.amount
+                            ethTokenSymbol = ethWalletDetails.token.symbol
+                            ethTokenId = ethWalletDetails.token.id
                         }
 
                         if(usdcTokenData.isNotEmpty()){
@@ -275,8 +275,8 @@ class HomePageActivity : AppCompatActivity() {
                         // Update UI components
                         runOnUiThread {
                             statusLoadingTextView.text = "Success! You can now proceed to send/receive or view past transactions."
-                            if (avaxTestnetTokenData.isNotEmpty()) {
-                                avaxTokenBalanceText.text = " $avaxTokenSymbol: $userAvaxTokenBalance"
+                            if (ethTestnetTokenData.isNotEmpty()) {
+                                ethTokenBalanceText.text = " $ethTokenSymbol: $userEthTokenBalance"
                             }
                             if(usdcTokenData.isNotEmpty()){
                                 usdcTokenBalanceText.text = " $usdcTokenSymbol: $userUSDCTokenBalance"
@@ -316,7 +316,7 @@ class HomePageActivity : AppCompatActivity() {
         apiKey: String?,
         userToken: String?,
         statusLoadingTextView: TextView,
-        avaxTokenBalanceText: TextView,
+        ethTokenBalanceText: TextView,
         usdcTokenBalanceText: TextView,
         delayMilliseconds: Long,
         walletAddressText: TextView,
@@ -355,7 +355,7 @@ class HomePageActivity : AppCompatActivity() {
                         userId = firstWallet.userId
 
                         // Call the function to get user token balance
-                        getUserTokenBalance(apiKey, userToken, avaxTokenBalanceText, usdcTokenBalanceText, statusLoadingTextView, walletAddressText, copyButton, loadingDialog)
+                        getUserTokenBalance(apiKey, userToken, ethTokenBalanceText, usdcTokenBalanceText, statusLoadingTextView, walletAddressText, copyButton, loadingDialog)
                     } else {
                         // Handle the case when the array is empty
                         Log.e("HomePageActivity", "No Wallets found for user.")
