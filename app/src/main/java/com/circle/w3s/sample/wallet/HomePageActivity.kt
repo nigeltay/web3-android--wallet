@@ -80,7 +80,7 @@ class HomePageActivity : AppCompatActivity() {
     private var avaxTokenSymbol = "ETH-SEPOLIA"
     private var userAvaxTokenBalance = "0"
 
-    private var usdcTokenId = "ff47a560-9795-5b7c-adfc-8f47dad9e06a"
+    private var usdcTokenId = "5797fbd6-3795-519d-84ca-ec4c5f80c3b1"
     private var usdcTokenSymbol = "USDC"
     private var userUSDCTokenBalance = "0"
 
